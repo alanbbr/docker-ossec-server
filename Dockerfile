@@ -1,5 +1,5 @@
-FROM phusion/baseimage:0.9.18
-MAINTAINER Terence Kent <tkent@xetus.com>
+FROM debian:stable-slim
+MAINTAINER Alan Brenner <alan@abcompcons.com>
 
 #
 # Follow the server installation parameters specified on the OSSEC website for
@@ -28,9 +28,7 @@ RUN service ossec restart &&\
 ADD data_dirs.env /data_dirs.env
 ADD init.bash /init.bash
 # Sync calls are due to https://github.com/docker/docker/issues/9547
-RUN chmod 755 /init.bash &&\
-  sync && /init.bash &&\
-  sync && rm /init.bash
+RUN chmod 755 /init.bash && /init.bash && rm /init.bash
 
 #
 # Add the bootstrap script
@@ -44,7 +42,7 @@ RUN chmod 755 /run.bash
 VOLUME ["/var/ossec/data"]
 
 # Expose ports for sharing
-EXPOSE 1514/udp 1515/tcp
+EXPOSE 514/ucp 514/tcp 1514/udp 1515/tcp
 
 #
 # Define default command.
