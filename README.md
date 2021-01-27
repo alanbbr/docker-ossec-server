@@ -40,6 +40,8 @@ docker exec -ti ossec-server /var/ossec/bin/list_agents -a
 
 **Please note**: All the SMTP and SYSLOG configuration variables are only applicable to the first time setup. Once the container's data volume has been initialized, all the configuration options for OSSEC can be changed.
 
+docker build --build-arg email_addr=alan@abcompcons.com .
+
 ## Known Issues / Warnings
 
 #### ossec-execd is not enabled

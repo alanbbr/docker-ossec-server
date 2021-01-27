@@ -4,7 +4,7 @@
 # OSSEC container bootstrap. See the README for information of the environment
 # variables expected by this script.
 #
-source /data_dirs.env
+source /data_dirs.sh
 FIRST_TIME_INSTALLATION=false
 DATA_PATH=/var/ossec/data
 
@@ -12,7 +12,7 @@ for ossecdir in "${DATA_DIRS[@]}"; do
   if [ ! -e "${DATA_PATH}/${ossecdir}" ]
   then
     echo "Installing ${ossecdir}"
-    cp -pr /var/ossec/${ossecdir}-template ${DATA_PATH}/${ossecdir}
+    cp -pr "/var/ossec/${ossecdir}-template" "${DATA_PATH}/${ossecdir}"
     FIRST_TIME_INSTALLATION=true
   fi
 done
