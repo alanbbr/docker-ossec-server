@@ -11,5 +11,4 @@ for ossecdir in "${DATA_DIRS[@]}"; do
   ln -s data/${ossecdir} ${ossecdir}
 done
 
-cd bin && ln -s ../data/process_list .process_list && cd ..
-
+ln -s ../data/process_list bin/.process_list

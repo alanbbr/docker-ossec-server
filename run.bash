@@ -31,16 +31,6 @@ chmod g+rw ${DATA_PATH}/process_list
 #
 AUTO_ENROLLMENT_ENABLED=${AUTO_ENROLLMENT_ENABLED:-true}
 
-#
-# Support SMTP, if configured
-#
-SMTP_ENABLED_DEFAULT=false
-if [ -n "$ALERTS_TO_EMAIL" ]
-then
-  SMTP_ENABLED_DEFAULT=true
-fi
-SMTP_ENABLED=${SMTP_ENABLED:-$SMTP_ENABLED_DEFAULT}
-
 if [ $FIRST_TIME_INSTALLATION == true ]
 then
 
@@ -59,34 +49,6 @@ then
     fi
   fi
 
-  if [ $SMTP_ENABLED == true ]
-  then
-    if [[ -z "$SMTP_RELAY_HOST" || -z "$ALERTS_TO_EMAIL" ]]
-    then
-      echo "Unable to configure SMTP, SMTP_RELAY_HOST or ALERTS_TO_EMAIL not defined"
-      SMTP_ENABLED=false
-    else
-
-      ALERTS_FROM_EMAIL=${ALERTS_FROM_EMAIL:-ossec_alerts@$HOSTNAME}
-      echo "d-i  ossec-hids/email_notification  boolean yes" >> /tmp/debconf.selections
-      echo "d-i  ossec-hids/email_from  string $ALERTS_FROM_EMAIL" >> /tmp/debconf.selections
-      echo "d-i  ossec-hids/email_to  string $ALERTS_TO_EMAIL" >> /tmp/debconf.selections
-      echo "d-i  ossec-hids/smtp_server  string $SMTP_RELAY_HOST" >> /tmp/debconf.selections
-    fi
-  fi
-
-  if [ $SMTP_ENABLED == false ]
-  then
-    echo "d-i  ossec-hids/email_notification  boolean no" >> /tmp/debconf.selections
-  fi
-
-  if [ -e /tmp/debconf.selections ]
-  then
-    debconf-set-selections /tmp/debconf.selections
-    dpkg-reconfigure -f noninteractive ossec-hids
-    rm /tmp/debconf.selections
-    /var/ossec/bin/ossec-control stop
-  fi
 
   #
   # Support SYSLOG forwarding, if configured
@@ -148,7 +110,6 @@ LAST_OK_DATE=`date +%s`
 #
 # Note that ossec-execd is never expected to run here.
 #
-STATUS_CMD="service ossec status | sed '/ossec-maild/d' | sed '/ossec-execd/d' | grep ' not running' | test -z"
 if [ $SMTP_ENABLED == true ]
 then
   STATUS_CMD="/var/ossec/bin/ossec-control status | sed '/ossec-execd/d' | grep ' not running' | test -z"
